@@ -9,10 +9,10 @@ func TestVincentyDistance(t *testing.T) {
 	// distance SD-EP: 1011300.217 m
 	// distance EP-SL: 1663833.491 m
 	// distance SL-NY: 1406519.972 m
-	var newYork = Coord{40.7128, 74.0060}
-	var sanDiego = Coord{32.7157, 117.1611}
-	var elPaso = Coord{31.7619, 106.4850}
-	var stLouis = Coord{38.6270, 90.1994}
+	var newYork = Coord{40.7128, -74.0060}
+	var sanDiego = Coord{32.7157, -117.1611}
+	var elPaso = Coord{31.7619, -106.4850}
+	var stLouis = Coord{38.6270, -90.1994}
 
 	var miles, km float64
 	var err error
