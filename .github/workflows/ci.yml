@@ -1,0 +1,52 @@
+name: Go CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    tags:
+      - '**'
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Go ${{ matrix.go-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: ['1.17.x', 'stable']
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version: ${{ matrix.go-version }}
+          # This module has no external dependencies or go.sum.
+          cache: false
+
+      - name: Check formatting
+        if: matrix.go-version == 'stable'
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            printf 'Run gofmt on these files:\n%s\n' "$unformatted"
+            exit 1
+          fi
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Build all packages and examples
+        run: go build ./...
+
+      - name: Test with race detection and coverage
+        run: go test -race -cover -count=1 ./...
